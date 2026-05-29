@@ -521,6 +521,9 @@ class SettingsProvider with ChangeNotifier {
         );
       } catch (_) {}
     }
+    if (Constant.ENABLE_TEST_LOGIN) {
+      return JWToken(Constant.TEST_ACCESS_TOKEN, Constant.TEST_REFRESH_TOKEN);
+    }
     return null;
   }
 

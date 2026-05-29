@@ -94,6 +94,18 @@ class Constant {
   static const String AUTH_BASE_URL = "https://auth.fduhole.com/api";
   static const String IMAGE_BASE_URL = "https://image.fduhole.com";
   static const String DANKE_BASE_URL = "https://danke.fduhole.com/api";
+  static const bool ENABLE_TEST_LOGIN = bool.fromEnvironment(
+    "ENABLE_TEST_LOGIN",
+    defaultValue: false,
+  );
+  static const String TEST_ACCESS_TOKEN = String.fromEnvironment(
+    "TEST_ACCESS_TOKEN",
+    defaultValue: "treehole-test-access",
+  );
+  static const String TEST_REFRESH_TOKEN = String.fromEnvironment(
+    "TEST_REFRESH_TOKEN",
+    defaultValue: "treehole-test-refresh",
+  );
 
   /// An link to the FAQ page of Danxi.
   static const String FAQ_URL =
