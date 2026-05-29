@@ -340,8 +340,13 @@ class ForumRepository extends BaseRepositoryWithDio {
   Future<List<OTHole>?> loadHoles(DateTime startTime, DivisionIdentifier? division,
       {int length = Constant.POST_COUNT_PER_PAGE,
       String? tag,
-      SortOrder? sortOrder}) async {
+      SortOrder? sortOrder,
+      double? cursorScore,
+      int? cursorId,
+      DateTime? createdStart,
+      DateTime? createdEnd}) async {
     sortOrder ??= SortOrder.LAST_REPLIED;
+    final String? sortStrategy = sortOrder.getStrategyString();
 
     RequestOptions options;
     if (division is Homepage) {
@@ -351,7 +356,14 @@ class ForumRepository extends BaseRepositoryWithDio {
           queryParameters: {
             "offset": startTime.toUtc().toIso8601String(),
             "size": length,
-            "order": sortOrder.getInternalString()
+            "order": sortOrder.getInternalString(),
+            "sort_strategy": sortStrategy,
+            if (cursorScore != null) "cursor_score": cursorScore,
+            if (cursorId != null) "cursor_id": cursorId,
+            if (createdStart != null)
+              "created_start": createdStart.toUtc().toIso8601String(),
+            if (createdEnd != null)
+              "created_end": createdEnd.toUtc().toIso8601String()
           },
           headers: _tokenHeader);
     } else if (division == null || division is DivisionId) {
@@ -363,7 +375,14 @@ class ForumRepository extends BaseRepositoryWithDio {
             if (division is DivisionId) "division_id": division.id,
             "length": length,
             "tag": tag,
-            "order": sortOrder.getInternalString()
+            "order": sortOrder.getInternalString(),
+            "sort_strategy": sortStrategy,
+            if (cursorScore != null) "cursor_score": cursorScore,
+            if (cursorId != null) "cursor_id": cursorId,
+            if (createdStart != null)
+              "created_start": createdStart.toUtc().toIso8601String(),
+            if (createdEnd != null)
+              "created_end": createdEnd.toUtc().toIso8601String()
           },
           headers: _tokenHeader);
     } else {

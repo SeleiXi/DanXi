@@ -40,6 +40,7 @@ class OTHole {
   int? favorite_count;
   int? subscription_count;
   bool? ai_summary_available;
+  double? sort_score;
 
   factory OTHole.fromJson(Map<String, dynamic> json) => _$OTHoleFromJson(json);
 
@@ -49,8 +50,17 @@ class OTHole {
   bool operator ==(Object other) =>
       (other is OTHole) && hole_id == other.hole_id;
 
-  OTHole(this.hole_id, this.division_id, this.time_created, this.time_updated,
-      this.time_deleted, this.tags, this.view, this.reply, this.floors);
+  OTHole(
+    this.hole_id,
+    this.division_id,
+    this.time_created,
+    this.time_updated,
+    this.time_deleted,
+    this.tags,
+    this.view,
+    this.reply,
+    this.floors,
+  );
 
   /// Generate an empty BBSPost for special sakes.
   factory OTHole.dummy() => OTHole(-1, -1, "", "", "", [], -1, -1, null);

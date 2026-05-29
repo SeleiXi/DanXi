@@ -52,6 +52,7 @@ class SettingsProvider with ChangeNotifier {
   //static const String KEY_PREFERRED_THEME = "theme";
   static const String KEY_FORUM_TOKEN = "fduhole_token_v3";
   static const String KEY_FORUM_SORTORDER = "fduhole_sortorder";
+  static const String KEY_FORUM_TIME_RANGE = "fduhole_time_range";
   static const String KEY_EMPTY_CLASSROOM_LAST_BUILDING_CHOICE =
       "ec_last_choice";
   static const String KEY_FORUM_FOLDBEHAVIOR = "fduhole_foldbehavior";
@@ -112,8 +113,9 @@ class SettingsProvider with ChangeNotifier {
 
   DateTime? get timetableLastUpdated {
     if (preferences!.containsKey(KEY_TIMETABLE_LAST_UPDATED)) {
-      String? timetableLastUpdated =
-          preferences!.getString(KEY_TIMETABLE_LAST_UPDATED);
+      String? timetableLastUpdated = preferences!.getString(
+        KEY_TIMETABLE_LAST_UPDATED,
+      );
       if (timetableLastUpdated != null) {
         return DateTime.tryParse(timetableLastUpdated);
       }
@@ -123,8 +125,10 @@ class SettingsProvider with ChangeNotifier {
 
   set timetableLastUpdated(DateTime? value) {
     if (value != null) {
-      preferences!
-          .setString(KEY_TIMETABLE_LAST_UPDATED, value.toIso8601String());
+      preferences!.setString(
+        KEY_TIMETABLE_LAST_UPDATED,
+        value.toIso8601String(),
+      );
     } else {
       preferences!.remove(KEY_TIMETABLE_LAST_UPDATED);
     }
@@ -147,7 +151,8 @@ class SettingsProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  List<String> get savedProxies => preferences!.getStringList(KEY_SAVED_PROXIES) ?? List.empty();
+  List<String> get savedProxies =>
+      preferences!.getStringList(KEY_SAVED_PROXIES) ?? List.empty();
 
   set savedProxies(List<String> value) {
     preferences!.setStringList(KEY_SAVED_PROXIES, value);
@@ -371,7 +376,8 @@ class SettingsProvider with ChangeNotifier {
   SemesterStartDates? get semesterStartDates {
     if (preferences!.containsKey(KEY_SEMESTER_START_DATES)) {
       return SemesterStartDates.fromJson(
-          jsonDecode(preferences!.getString(KEY_SEMESTER_START_DATES)!));
+        jsonDecode(preferences!.getString(KEY_SEMESTER_START_DATES)!),
+      );
     }
     return null;
   }
@@ -396,8 +402,9 @@ class SettingsProvider with ChangeNotifier {
       // Merge new features which are added in the new version.
       for (var element in Constant.defaultDashboardCardList) {
         if (!element.isSpecialCard &&
-            !rawCardList
-                .any((card) => card.internalString == element.internalString)) {
+            !rawCardList.any(
+              (card) => card.internalString == element.internalString,
+            )) {
           rawCardList.add(element);
         }
       }
@@ -439,11 +446,13 @@ class SettingsProvider with ChangeNotifier {
   Campus get campus {
     if (preferences!.containsKey(KEY_PREFERRED_CAMPUS)) {
       String? value = preferences!.getString(KEY_PREFERRED_CAMPUS);
-      return Constant.CAMPUS_VALUES
-          .firstWhere((element) => element.toString() == value, orElse: () {
-        campus = Campus.HANDAN_CAMPUS;
-        return Campus.HANDAN_CAMPUS;
-      });
+      return Constant.CAMPUS_VALUES.firstWhere(
+        (element) => element.toString() == value,
+        orElse: () {
+          campus = Campus.HANDAN_CAMPUS;
+          return Campus.HANDAN_CAMPUS;
+        },
+      );
     }
     return Campus.HANDAN_CAMPUS;
   }
@@ -477,10 +486,12 @@ class SettingsProvider with ChangeNotifier {
   Language get language {
     if (preferences!.containsKey(KEY_PREFERRED_LANGUAGE)) {
       String? value = preferences!.getString(KEY_PREFERRED_LANGUAGE);
-      return Constant.LANGUAGE_VALUES
-          .firstWhere((element) => element.toString() == value, orElse: () {
-        return defaultLanguage;
-      });
+      return Constant.LANGUAGE_VALUES.firstWhere(
+        (element) => element.toString() == value,
+        orElse: () {
+          return defaultLanguage;
+        },
+      );
     }
     return defaultLanguage;
   }
@@ -506,7 +517,8 @@ class SettingsProvider with ChangeNotifier {
     if (preferences!.containsKey(KEY_FORUM_TOKEN)) {
       try {
         return JWToken.fromJsonWithVerification(
-            jsonDecode(preferences!.getString(KEY_FORUM_TOKEN)!));
+          jsonDecode(preferences!.getString(KEY_FORUM_TOKEN)!),
+        );
       } catch (_) {}
     }
     return null;
@@ -526,6 +538,7 @@ class SettingsProvider with ChangeNotifier {
     //preferences!.remove(KEY_LAST_PUSH_TOKEN);
     preferences!.remove(KEY_FORUM_FOLDBEHAVIOR);
     preferences!.remove(KEY_FORUM_SORTORDER);
+    preferences!.remove(KEY_FORUM_TIME_RANGE);
     preferences!.remove(KEY_HIDE_FORUM);
     preferences!.remove(KEY_HIDDEN_TAGS);
   }
@@ -548,17 +561,32 @@ class SettingsProvider with ChangeNotifier {
   SortOrder? get forumSortOrder {
     if (preferences!.containsKey(KEY_FORUM_SORTORDER)) {
       String? str = preferences!.getString(KEY_FORUM_SORTORDER);
-      if (str == SortOrder.LAST_CREATED.getInternalString()) {
-        return SortOrder.LAST_CREATED;
-      } else if (str == SortOrder.LAST_REPLIED.getInternalString()) {
-        return SortOrder.LAST_REPLIED;
-      }
+      return SortOrder.values.firstWhere(
+        (element) => element.getInternalString() == str,
+        orElse: () => SortOrder.LAST_REPLIED,
+      );
     }
     return null;
   }
 
   set forumSortOrder(SortOrder? value) {
     preferences!.setString(KEY_FORUM_SORTORDER, value.getInternalString()!);
+    notifyListeners();
+  }
+
+  ForumTimeRange get forumTimeRange {
+    if (preferences!.containsKey(KEY_FORUM_TIME_RANGE)) {
+      String? str = preferences!.getString(KEY_FORUM_TIME_RANGE);
+      return ForumTimeRange.values.firstWhere(
+        (element) => element.getInternalString() == str,
+        orElse: () => ForumTimeRange.ALL,
+      );
+    }
+    return ForumTimeRange.ALL;
+  }
+
+  set forumTimeRange(ForumTimeRange value) {
+    preferences!.setString(KEY_FORUM_TIME_RANGE, value.getInternalString());
     notifyListeners();
   }
 
@@ -628,11 +656,11 @@ class SettingsProvider with ChangeNotifier {
 
   /// Celebration words
   List<Celebration> get celebrationWords =>
-      jsonDecode(preferences!.containsKey(KEY_CELEBRATION)
-              ? preferences!.getString(KEY_CELEBRATION)!
-              : Constant.SPECIAL_DAYS)
-          .map<Celebration>((e) => Celebration.fromJson(e))
-          .toList();
+      jsonDecode(
+        preferences!.containsKey(KEY_CELEBRATION)
+            ? preferences!.getString(KEY_CELEBRATION)!
+            : Constant.SPECIAL_DAYS,
+      ).map<Celebration>((e) => Celebration.fromJson(e)).toList();
 
   set celebrationWords(List<Celebration> lists) {
     preferences!.setString(KEY_CELEBRATION, jsonEncode(lists));
@@ -759,9 +787,9 @@ class SettingsProvider with ChangeNotifier {
 
   List<int> get hiddenHoles {
     if (preferences!.containsKey(KEY_HIDDEN_HOLES)) {
-      return jsonDecode(preferences!.getString(KEY_HIDDEN_HOLES)!)
-          .map<int>((e) => e as int)
-          .toList();
+      return jsonDecode(
+        preferences!.getString(KEY_HIDDEN_HOLES)!,
+      ).map<int>((e) => e as int).toList();
     } else {
       return [];
     }
@@ -774,9 +802,9 @@ class SettingsProvider with ChangeNotifier {
 
   List<String> get hiddenNotifications {
     if (preferences!.containsKey(KEY_HIDDEN_NOTIFICATIONS)) {
-      return jsonDecode(preferences!.getString(KEY_HIDDEN_NOTIFICATIONS)!)
-          .map<String>((e) => e as String)
-          .toList();
+      return jsonDecode(
+        preferences!.getString(KEY_HIDDEN_NOTIFICATIONS)!,
+      ).map<String>((e) => e as String).toList();
     } else {
       return [];
     }
@@ -790,7 +818,8 @@ class SettingsProvider with ChangeNotifier {
   ThemeType get themeType {
     if (preferences!.containsKey(KEY_THEME_TYPE)) {
       return themeTypeFromInternalString(
-              preferences!.getString(KEY_THEME_TYPE)) ??
+            preferences!.getString(KEY_THEME_TYPE),
+          ) ??
           ThemeType.SYSTEM;
     } else {
       return ThemeType.SYSTEM;
@@ -899,7 +928,7 @@ class SettingsProvider with ChangeNotifier {
   }
 }
 
-enum SortOrder { LAST_REPLIED, LAST_CREATED }
+enum SortOrder { LAST_REPLIED, LAST_CREATED, HOT, RECOMMEND }
 
 extension SortOrderEx on SortOrder? {
   String? displayTitle(BuildContext context) {
@@ -908,6 +937,10 @@ extension SortOrderEx on SortOrder? {
         return S.of(context).last_replied;
       case SortOrder.LAST_CREATED:
         return S.of(context).last_created;
+      case SortOrder.HOT:
+        return "Hot";
+      case SortOrder.RECOMMEND:
+        return "Search/Recommend";
       case null:
         return null;
     }
@@ -919,8 +952,69 @@ extension SortOrderEx on SortOrder? {
         return "time_updated";
       case SortOrder.LAST_CREATED:
         return "time_created";
+      case SortOrder.HOT:
+        return "hot";
+      case SortOrder.RECOMMEND:
+        return "recommend";
       case null:
         return null;
+    }
+  }
+
+  String? getStrategyString() {
+    switch (this) {
+      case SortOrder.HOT:
+        return "hot";
+      case SortOrder.RECOMMEND:
+        return "recommend";
+      case SortOrder.LAST_REPLIED:
+      case SortOrder.LAST_CREATED:
+        return "original";
+      case null:
+        return null;
+    }
+  }
+
+  bool get usesScoreCursor =>
+      this == SortOrder.HOT || this == SortOrder.RECOMMEND;
+}
+
+enum ForumTimeRange { ALL, TWO_MONTHS }
+
+extension ForumTimeRangeEx on ForumTimeRange {
+  String displayTitle(BuildContext context) {
+    switch (this) {
+      case ForumTimeRange.ALL:
+        return "All time";
+      case ForumTimeRange.TWO_MONTHS:
+        return "Last 2 months";
+    }
+  }
+
+  String getInternalString() {
+    switch (this) {
+      case ForumTimeRange.ALL:
+        return "all";
+      case ForumTimeRange.TWO_MONTHS:
+        return "two_months";
+    }
+  }
+
+  DateTime? createdStart(DateTime now) {
+    switch (this) {
+      case ForumTimeRange.ALL:
+        return null;
+      case ForumTimeRange.TWO_MONTHS:
+        return DateTime(
+          now.year,
+          now.month - 2,
+          now.day,
+          now.hour,
+          now.minute,
+          now.second,
+          now.millisecond,
+          now.microsecond,
+        );
     }
   }
 }
