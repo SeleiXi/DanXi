@@ -373,7 +373,7 @@ class ForumRepository extends BaseRepositoryWithDio {
           queryParameters: {
             "start_time": startTime.toUtc().toIso8601String(),
             if (division is DivisionId) "division_id": division.id,
-            "length": length,
+            "size": length,
             "tag": tag,
             "order": sortOrder.getInternalString(),
             "sort_strategy": sortStrategy,
