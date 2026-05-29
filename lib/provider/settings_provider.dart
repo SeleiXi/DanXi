@@ -895,6 +895,9 @@ class SettingsProvider with ChangeNotifier {
   }
 
   bool get isLoggedIn {
+    if (Constant.ENABLE_TEST_LOGIN) {
+      return true;
+    }
     if (preferences!.containsKey(KEY_IS_LOGGED_IN)) {
       return preferences!.getBool(KEY_IS_LOGGED_IN)!;
     }
