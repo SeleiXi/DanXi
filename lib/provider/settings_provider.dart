@@ -946,7 +946,7 @@ extension SortOrderEx on SortOrder? {
       case SortOrder.HOT:
         return "Hot";
       case SortOrder.RECOMMEND:
-        return "Search/Recommend";
+        return "Model Recommend";
       case null:
         return null;
     }
