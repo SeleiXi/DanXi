@@ -601,6 +601,7 @@ class ForumSubpageState extends PlatformSubpageState<ForumSubpage> {
                     SortOrder.LAST_REPLIED => lastElement.time_updated!,
                     SortOrder.HOT => lastElement.time_updated!,
                     SortOrder.RECOMMEND => lastElement.time_updated!,
+                    SortOrder.MODEL_RECOMMEND => lastElement.time_updated!,
                   });
                 }
               }

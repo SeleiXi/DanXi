@@ -934,7 +934,7 @@ class SettingsProvider with ChangeNotifier {
   }
 }
 
-enum SortOrder { LAST_REPLIED, LAST_CREATED, HOT, RECOMMEND }
+enum SortOrder { LAST_REPLIED, LAST_CREATED, HOT, RECOMMEND, MODEL_RECOMMEND }
 
 extension SortOrderEx on SortOrder? {
   String? displayTitle(BuildContext context) {
@@ -946,6 +946,8 @@ extension SortOrderEx on SortOrder? {
       case SortOrder.HOT:
         return "Hot";
       case SortOrder.RECOMMEND:
+        return "Recommend";
+      case SortOrder.MODEL_RECOMMEND:
         return "Model Recommend";
       case null:
         return null;
@@ -962,6 +964,8 @@ extension SortOrderEx on SortOrder? {
         return "hot";
       case SortOrder.RECOMMEND:
         return "recommend";
+      case SortOrder.MODEL_RECOMMEND:
+        return "model_recommend";
       case null:
         return null;
     }
@@ -973,6 +977,8 @@ extension SortOrderEx on SortOrder? {
         return "hot";
       case SortOrder.RECOMMEND:
         return "recommend";
+      case SortOrder.MODEL_RECOMMEND:
+        return "model_recommend";
       case SortOrder.LAST_REPLIED:
       case SortOrder.LAST_CREATED:
         return "original";
@@ -982,7 +988,9 @@ extension SortOrderEx on SortOrder? {
   }
 
   bool get usesScoreCursor =>
-      this == SortOrder.HOT || this == SortOrder.RECOMMEND;
+      this == SortOrder.HOT ||
+      this == SortOrder.RECOMMEND ||
+      this == SortOrder.MODEL_RECOMMEND;
 }
 
 enum ForumTimeRange { ALL, TWO_MONTHS }
